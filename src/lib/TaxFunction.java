@@ -2,7 +2,13 @@ package lib;
 
 public class TaxFunction {
 
-	
+	private static final int BASIC_PTKP = 54000000;
+    private static final int MARRIED_PTKP = 4500000;
+    private static final int CHILD_PTKP = 1500000;
+    private static final double TAX_RATE = 0.05;
+    private static final int MAX_CHILDREN = 3;
+    private static final int MAX_MONTHS = 12;
+
 	/**
 	 * Fungsi untuk menghitung jumlah pajak penghasilan pegawai yang harus dibayarkan setahun.
 	 * 
@@ -15,30 +21,26 @@ public class TaxFunction {
 	 */
 	
 	
-	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isMarried, int numberOfChildren) {
+	public static int calculateTax(int monthlySalary, int otherMonthlyIncome, int numberOfMonthWorking, int deductible, boolean isSingle, int numberOfChildren) {
 		
-		int tax = 0;
-		
-		if (numberOfMonthWorking > 12) {
-			System.err.println("More than 12 month working per year");
+		if (numberOfMonthWorking > MAX_MONTHS) {
+			throw new IllegalArgumentException("jumlah bulan bekerja tidak boleh lebih dari 12") ;
 		}
 		
-		if (numberOfChildren > 3) {
-			numberOfChildren = 3;
-		}
-		
-		if (isMarried) {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - (54000000 + 4500000 + (numberOfChildren * 1500000))));
-		}else {
-			tax = (int) Math.round(0.05 * (((monthlySalary + otherMonthlyIncome) * numberOfMonthWorking) - deductible - 54000000));
-		}
-		
-		if (tax < 0) {
-			return 0;
-		}else {
-			return tax;
-		}
-			 
-	}
+		numberOfChildren = Math.min(numberOfChildren, MAX_CHILDREN);
+		int ptkp = BASIC_PTKP;
+        if (!isSingle) {
+            ptkp += MARRIED_PTKP + (numberOfChildren * CHILD_PTKP);
+        }
+
+        int annualIncome = (monthlySalary + otherMonthlyIncome) * numberOfMonthWorking;
+        int taxableIncome = annualIncome - deductible - ptkp;
+
+        if (taxableIncome <= 0) {
+            return 0;
+        }
+
+        return (int) Math.round(TAX_RATE * taxableIncome);
+    }
 	
 }
