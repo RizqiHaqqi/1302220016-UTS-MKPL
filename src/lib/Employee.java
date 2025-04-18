@@ -1,6 +1,7 @@
 package lib;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -80,15 +81,20 @@ public class Employee {
 	public int getAnnualIncomeTax() {
 		
 		//Menghitung berapa lama pegawai bekerja dalam setahun ini, jika pegawai sudah bekerja dari tahun sebelumnya maka otomatis dianggap 12 bulan.
-		LocalDate date = LocalDate.now();
+		int monthWorkingInYear = calculateMonthsWorkedInYear();
+		boolean hasSpouse = spouse != null;
+		int numberOfChildren = children.size();
 		
-		if (date.getYear() == yearJoined) {
-			monthWorkingInYear = date.getMonthValue() - monthJoined;
-		}else {
-			monthWorkingInYear = 12;
+		return TaxFunction.calculateTax(monthlySalary, otherMonthlyIncome, monthWorkingInYear, annualDeductible, !hasSpouse, numberOfChildren);
+	}
+
+	public int calculateMonthsWorkedInYear(){
+		LocalDate now = LocalDate.now();
+		if(now.getYear() == joinDate.getYear()){
+			return now.getMonthValue() - joinDate.getMonthValue();
+		} else {
+			return 12;	
 		}
-		
-		return TaxFunction.calculateTax(monthlySalary, otherMonthlyIncome, monthWorkingInYear, annualDeductible, spouseIdNumber.equals(""), childIdNumbers.size());
 	}
 
 	private static class Spouse {
