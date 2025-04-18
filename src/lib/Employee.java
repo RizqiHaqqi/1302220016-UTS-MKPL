@@ -7,6 +7,11 @@ import java.util.List;
 
 public class Employee {
 
+	private static final int SALARY_GRADE_1 = 3000000;
+	private static final int SALARY_GRADE_2 = 5000000;
+	private static final int SALARY_GRADE_3 = 7000000;
+	private static final double FOREIGNER_MULTIPLIER = 1.5;
+
 	private String employeeId;
 	private String firstName;
 	private String lastName;
@@ -53,21 +58,11 @@ public class Employee {
 	 */
 	
 	public void setMonthlySalary(int grade) {	
-		if (grade == 1) {
-			monthlySalary = 3000000;
-			if (isForeigner) {
-				monthlySalary = (int) (3000000 * 1.5);
-			}
-		}else if (grade == 2) {
-			monthlySalary = 5000000;
-			if (isForeigner) {
-				monthlySalary = (int) (3000000 * 1.5);
-			}
-		}else if (grade == 3) {
-			monthlySalary = 7000000;
-			if (isForeigner) {
-				monthlySalary = (int) (3000000 * 1.5);
-			}
+		switch (grade) {
+			case 1 : monthlySalary = SALARY_GRADE_1;
+			case 2 : monthlySalary = SALARY_GRADE_2;
+			case 3 : monthlySalary = SALARY_GRADE_3;
+			default : throw new IllegalArgumentException("invalid grade: " + grade);
 		}
 	}
 	
